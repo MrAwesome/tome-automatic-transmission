@@ -43,7 +43,7 @@ local function resolveTalent(self, tid)
 		item_name = tid
 		tid = o.use_talent.id
 	elseif o and o.use_power then
-		t = {name=tid, mode="activated", auto_use_check=false, no_energy=false}
+		t = {name=tid, id=tid, mode="activated", auto_use_check=false, no_energy=false, requires_target=false}
 		range = 1
 		inventory = true
 		item_name = tid
@@ -102,7 +102,7 @@ function _M:automaticTalents()
 		end
 	end
 
-	if self.talents_auto_order and not self.talents_auto_ordering_off then
+	if self.talents_auto_order then
 		local uses_by_bind = {}
 		local uses_by_tid = {}
 		local uses_by_name = {}
@@ -131,13 +131,15 @@ function _M:automaticTalents()
 			end
 		end
 		uses = sorted_uses
+	else
+		for i, use in ipairs(uses) do
+			use._order = i
+		end
+		table.sort(uses, function(a, b)
+			if a.no_energy ~= b.no_energy then return a.no_energy < b.no_energy end
+			return a._order < b._order
+		end)
 	end
-
-	table.sort(uses, function(a, b)
-		if a.no_energy < b.no_energy then return true
-		elseif a.no_energy > b.no_energy then return false
-		else return a.cd > b.cd end
-	end)
 
 	for _, use in ipairs(uses) do
 		if left_click_trigger and use.ftarget then
@@ -172,8 +174,10 @@ function _M:restCheck(...)
 		local cfg = Config.get(self, tid)
 		if Config.hasMeaningfulConstraints(cfg) or Config.hpConditionBlocksRest(self, cfg) then
 			hidden[tid] = true
-			self.talents_auto[tid] = nil
 		end
+	end
+	for tid, _ in pairs(hidden) do
+		self.talents_auto[tid] = nil
 	end
 	local ok, msg = super_restCheck(self, ...)
 	for tid, _ in pairs(hidden) do

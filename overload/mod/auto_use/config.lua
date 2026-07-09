@@ -110,6 +110,7 @@ function _M.hasMeaningfulConstraints(cfg)
 	if cfg.trigger == "left_click" then return true end
 	if cfg.enemy_presence == "require" then return true end
 	if cfg.range and cfg.range ~= "none" then return true end
+	if cfg.distance then return true end
 	return false
 end
 

@@ -14,8 +14,8 @@ Each talent has a rule table stored in `game.player.talents_auto_config[tid]`
 | `hp_custom` | `nil\|{op, pct}` | `nil` | Custom HP override. Takes precedence over `hp` when set. Supports any 0-100 value. |
 | `effects` | `nil\|"physical"\|"mental"\|"magical"\|"any"` | `nil` | Detrimental effect filter |
 | `enemy_rank_max` | `nil\|number` | `nil` | Max enemy rank (2 = skip elites+) |
-| `distance` | `nil\|{min, max}` | `nil` | Chebyshev distance band to any foe |
-| `range` | `nil\|"talent_max"\|"not_adjacent"\|"two_tiles"\|"melee"` | `nil` | Range mode |
+| `distance` | `nil\|{min, max}` | `nil` | Euclidean (rounded) distance band to any foe |
+| `range` | `nil\|"talent_max"\|"not_adjacent"\|"two_tiles"\|"melee"` | `nil` | Range mode (uses `core.fov.distance`) |
 | `resting` | `nil\|true\|false` | `nil` | Resting state filter |
 | `sustained` | `nil\|"on_when_safe"\|"off_when_enemies"` | `nil` | Sustained behavior |
 
@@ -23,8 +23,8 @@ Each talent has a rule table stored in `game.player.talents_auto_config[tid]`
 
 - **`trigger = "left_click"`** — talent only fires when player left-clicked a hostile target this tick
 - **`enemy_presence = "forbid"`** — requires no enemies visible, not blind, and not `in_combat`
-- **`range = "not_adjacent"`** — enemy must be ≥2 tiles (chebyshev) AND within talent range
-- **`distance`** — used alongside `range` for fine-grained chebyshev band
+- **`range = "not_adjacent"`** — enemy must be ≥2 tiles AND within talent range
+- **`distance`** — used alongside `range` for fine-grained Euclidean band
 - **`sustained = "on_when_safe"`** — activates sustain when safe, won't sustain otherwise
 - **`sustained = "off_when_enemies"`** — deactivates sustain when enemies appear
 

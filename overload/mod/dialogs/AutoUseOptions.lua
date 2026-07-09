@@ -160,7 +160,7 @@ function _M:generateList()
 			end
 		end)
 
-	add("Range", "Distance to enemies required to fire.\n\n#WHITE#talent_max = within talent range. not_adjacent = ≥2 tiles & in range. two_tiles = ≤2 Chebyshev. melee = adjacent (Chebyshev ≤1).",
+	add("Range", "Distance to enemies required to fire.\n\n#WHITE#talent_max = within talent range. not_adjacent = ≥2 tiles & in range. two_tiles = ≤2. melee = adjacent.",
 		function()
 			if not cfg.range or cfg.range == "none" then return "ignore"
 			else return cfg.range end

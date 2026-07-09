@@ -18,15 +18,6 @@ class:bindHook('ToME:load', function(self, data)
   }
 end)
 
-class:bindHook('ToME:load', function(self, data)
-  KeyBind:defineAction {
-    default = { 'sym:_x:false:true:true:false' },
-    type = 'TOGGLE_AUTO_USE_ORDER',
-    group = 'miscellaneous',
-    name = 'Toggle auto-use custom talent ordering ON/OFF',
-  }
-end)
-
 class:bindHook('ToME:runDone', function(self, data)
   game.key:addBinds {
     TOGGLE_AUTO_USE = function()
@@ -43,16 +34,6 @@ class:bindHook('ToME:runDone', function(self, data)
       local AutoUserOrderListDialog = require('mod.dialogs.AutoUserOrderListDialog')
       game:registerDialog(AutoUserOrderListDialog.new(game))
     end,
-    TOGGLE_AUTO_USE_ORDER = function()
-      local p = game.player
-      if p.talents_auto_ordering_off then
-        p.talents_auto_ordering_off = false
-        game.log("Auto-use Custom Ordering Enabled")
-      else
-        p.talents_auto_ordering_off = true
-        game.log("Auto-use Custom Ordering Disabled")
-      end
-    end
   }
 end)
 

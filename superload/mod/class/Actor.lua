@@ -12,7 +12,7 @@ function _M:checkSetTalentAuto(tid, v, cfg)
 		if o and o.use_talent and o.use_talent.id then
 			t = game.player:getTalentFromId(o.use_talent.id)
 		elseif o and o.use_power then
-			t = {name=tid, no_energy=false, requires_target=false, auto_use_warning=false}
+			t = {name=tid, id=tid, no_energy=false, requires_target=false, auto_use_warning=false}
 		end
 		inventory = true
 	end

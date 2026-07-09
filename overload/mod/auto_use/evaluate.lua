@@ -1,9 +1,5 @@
 local _M = {}
 
-local function chebyshev(ax, ay, bx, by)
-	return math.max(math.abs(ax - bx), math.abs(ay - by))
-end
-
 local function hpMatches(self, hp, hp_custom)
 	local check = hp_custom or hp
 	if not check or not check.op or not check.pct then return true end
@@ -27,7 +23,7 @@ local function effectMatches(cfg, ctx)
 end
 
 local function foeMatchesDistance(self, foe, distance)
-	local d = chebyshev(self.x, self.y, foe.x, foe.y)
+	local d = core.fov.distance(self.x, self.y, foe.x, foe.y)
 	if distance.min and d < distance.min then return false end
 	if distance.max and d > distance.max then return false end
 	return true
@@ -35,10 +31,9 @@ end
 
 local function foeMatchesRange(self, foe, range_mode, talent_range)
 	local dist_euclid = core.fov.distance(self.x, self.y, foe.x, foe.y)
-	local dist_cheb = chebyshev(self.x, self.y, foe.x, foe.y)
-	if range_mode == "melee" then return dist_cheb <= 1
-	elseif range_mode == "two_tiles" then return dist_cheb <= 2
-	elseif range_mode == "not_adjacent" then return dist_cheb >= 2 and dist_euclid <= talent_range
+	if range_mode == "melee" then return dist_euclid <= 1
+	elseif range_mode == "two_tiles" then return dist_euclid <= 2
+	elseif range_mode == "not_adjacent" then return dist_euclid >= 2 and dist_euclid <= talent_range
 	elseif range_mode == "talent_max" then return dist_euclid <= talent_range
 	end
 	return true
@@ -58,7 +53,7 @@ function _M.buildContext(self, left_click, lc_target)
 	local physical, mental, magical = 0, 0, 0
 	for eff_id, p in pairs(self.tmp) do
 		local e = self.tempeffect_def[eff_id]
-		if e.status == "detrimental" then
+		if e and e.status == "detrimental" then
 			if e.type == "physical" then physical = 1
 			elseif e.type == "mental" then mental = 1
 			elseif e.type == "magical" then magical = 1
@@ -124,14 +119,14 @@ function _M.evaluate(self, cfg, ctx, talent, talent_range)
 		end
 	end
 
-	if cfg.range and cfg.range ~= "none" and #ctx.spotted == 0 then
+	if (cfg.range and cfg.range ~= "none" or cfg.distance) and #ctx.spotted == 0 then
 		return false
 	end
 
 	if cfg.range and cfg.range ~= "none" then
 		if cfg.range == "not_adjacent" then
 			for _, foe in pairs(ctx.spotted) do
-				if chebyshev(self.x, self.y, foe.x, foe.y) <= 1 then
+				if core.fov.distance(self.x, self.y, foe.x, foe.y) <= 1 then
 					return false
 				end
 			end
@@ -150,7 +145,7 @@ function _M.evaluate(self, cfg, ctx, talent, talent_range)
 	elseif cfg.distance and #ctx.spotted > 0 then
 		if cfg.distance.min then
 			for _, foe in pairs(ctx.spotted) do
-				if chebyshev(self.x, self.y, foe.x, foe.y) < cfg.distance.min then
+				if core.fov.distance(self.x, self.y, foe.x, foe.y) < cfg.distance.min then
 					return false
 				end
 			end
@@ -158,7 +153,7 @@ function _M.evaluate(self, cfg, ctx, talent, talent_range)
 		if cfg.distance.max then
 			local matched = false
 			for _, foe in pairs(ctx.spotted) do
-				if chebyshev(self.x, self.y, foe.x, foe.y) <= cfg.distance.max then
+				if core.fov.distance(self.x, self.y, foe.x, foe.y) <= cfg.distance.max then
 					matched = true
 					break
 				end

@@ -2,7 +2,7 @@ long_name = "Automatic Transmission"
 short_name = "automatic_transmission"
 for_module = "tome"
 version = {1,7,6}
-addon_version = {0,0,4}
+addon_version = {0,0,6}
 weight = 100
 author = { "Gleesus", "admin@gleesus.net" }
 homepage = "https://github.com/MrAwesome/auto-use-tweaks-improved"
@@ -23,7 +23,6 @@ Default hotkeys:
 * Toggle auto-accept-target ALT+F1
 * Toggle auto-use on/off CTRL+P (or ALT+SHIFT+P for a separate additional disable)
 * Change auto-use-custom-priority ALT+SHIFT+O
-* Toggle auto-use-custom-priority ALT+SHIFT+X
 
 Based originally on this addon:
 https://te4.org/games/addons/tome/auto_use_tweaks
