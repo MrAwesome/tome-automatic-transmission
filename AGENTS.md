@@ -31,3 +31,10 @@ then checks each enabled talent's rules. Cross-character defaults in `config.set
 - `AutoUseOptions:init(item)` takes `{name=tid, display_name=...}`, NOT `(player, tid)`
 - "When safe" = no enemies visible + not blind + not `in_combat`
 - No save migration — new addon for new games only
+
+## Reference code
+
+The engine code is in `~/code/t-engine4/`, with the ToME code living in `~/code/t-engine4/game/modules/tome/`.
+
+The extracted code of the DLCs is in `~/code/addon-testing/tome-dlcs/`. This can be useful for checking the implementation of DLC-only talents/tinker
+s, such as Saw Wheels or Rocket Boots.
