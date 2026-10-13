@@ -53,6 +53,7 @@ function _M.describe(cfg)
 
 	if cfg.sustained == "on_when_safe" then parts[#parts + 1] = "activate when safe"
 	elseif cfg.sustained == "off_when_enemies" then parts[#parts + 1] = "deactivate w/ enemies"
+	elseif cfg.sustained == "off_when_enemies_on_when_safe" then parts[#parts + 1] = "activate when safe / deactivate w/ enemies"
 	end
 
 	if #parts == 0 then return "Available"

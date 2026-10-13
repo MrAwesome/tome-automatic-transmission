@@ -17,7 +17,7 @@ Each talent has a rule table stored in `game.player.talents_auto_config[tid]`
 | `distance` | `nil\|{min, max}` | `nil` | Euclidean (rounded) distance band to any foe |
 | `range` | `nil\|"talent_max"\|"not_adjacent"\|"two_tiles"\|"melee"` | `nil` | Range mode (uses `core.fov.distance`) |
 | `resting` | `nil\|true\|false` | `nil` | Resting state filter |
-| `sustained` | `nil\|"on_when_safe"\|"off_when_enemies"` | `nil` | Sustained behavior |
+| `sustained` | `nil\|"on_when_safe"\|"off_when_enemies"\|"off_when_enemies_on_when_safe"` | `nil` | Sustained behavior |
 
 ## Semantics
 
@@ -27,6 +27,7 @@ Each talent has a rule table stored in `game.player.talents_auto_config[tid]`
 - **`distance`** — used alongside `range` for fine-grained Euclidean band
 - **`sustained = "on_when_safe"`** — activates sustain when safe, won't sustain otherwise
 - **`sustained = "off_when_enemies"`** — deactivates sustain when enemies appear
+- **`sustained = "off_when_enemies_on_when_safe"`** — activates sustain when safe, deactivates it when enemies appear (combines both options above)
 
 ## Examples
 

@@ -116,6 +116,13 @@ function _M.evaluate(self, cfg, ctx, talent, talent_range)
 			if not self.sustain_talents[talent.id] then return false end
 			if #ctx.spotted > 0 then return true end
 			return false
+		elseif cfg.sustained == "off_when_enemies_on_when_safe" then
+			if self.sustain_talents[talent.id] then
+				if #ctx.spotted > 0 then return true end
+				return false
+			end
+			if not _M.isSafe(self, ctx) then return false end
+			return true
 		end
 	end
 

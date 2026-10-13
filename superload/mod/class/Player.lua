@@ -71,11 +71,13 @@ function _M:automaticTalents()
 			if Evaluate.evaluate(self, cfg, ctx, t, range) then
 				local can_use = true
 				if t.mode == "sustained" then
-					if cfg.sustained == "on_when_safe" and not self.sustain_talents[tid] and not self.talents_cd[tid] then
+					local turn_on = cfg.sustained == "on_when_safe" or cfg.sustained == "off_when_enemies_on_when_safe"
+					local turn_off = cfg.sustained == "off_when_enemies" or cfg.sustained == "off_when_enemies_on_when_safe"
+					if turn_on and not self.sustain_talents[tid] and not self.talents_cd[tid] then
 						useTalentOrItem(self, inventory and bind_id or tid, inventory, item_name)
 						talents_ran_check = true
 						can_use = false
-					elseif cfg.sustained == "off_when_enemies" and self.sustain_talents[tid] then
+					elseif turn_off and self.sustain_talents[tid] then
 						useTalentOrItem(self, inventory and bind_id or tid, inventory, item_name)
 						talents_ran_check = true
 						can_use = false

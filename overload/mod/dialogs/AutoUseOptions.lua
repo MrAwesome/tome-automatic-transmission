@@ -211,14 +211,15 @@ function _M:generateList()
 			self:refresh(item)
 		end)
 
-	add("Sustained", "For sustained talents: turn on when safe, or turn off when enemies appear.",
+	add("Sustained", "For sustained talents: turn on when safe, turn off when enemies appear, or both (on when safe, off when enemies).",
 		function()
 			if cfg.sustained == "on_when_safe" then return "on when safe"
 			elseif cfg.sustained == "off_when_enemies" then return "off when enemies"
+			elseif cfg.sustained == "off_when_enemies_on_when_safe" then return "on safe / off enemies"
 			else return "ignore" end
 		end,
 		function(item)
-			cfg.sustained = cycle3(cfg.sustained, {"on_when_safe", "off_when_enemies"})
+			cfg.sustained = cycle3(cfg.sustained, {"on_when_safe", "off_when_enemies", "off_when_enemies_on_when_safe"})
 			self:refresh(item)
 		end)
 
