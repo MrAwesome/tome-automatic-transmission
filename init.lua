@@ -31,7 +31,8 @@ Adds game options:
 Based originally on this addon:
 https://te4.org/games/addons/tome/auto_use_tweaks
 
-NOTE: this was heavily vibe-coded, so do not be surprised if your character turns into a pumpkin.
+NOTE: I am a software engineer, but as an experiment this was heavily vibe-coded, so do not be surprised if your character turns into a pumpkin
+NOTE 2: the author has now beaten Insane/RL twice with this addon enabled, so maybe the robots are good at coding now
 ]]
 tags = {'auto-use', 'tweaks', 'auto', 'talent', 'use', 'custom'}
 overload = true
