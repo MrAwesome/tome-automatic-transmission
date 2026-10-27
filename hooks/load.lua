@@ -37,6 +37,30 @@ class:bindHook('ToME:runDone', function(self, data)
   }
 end)
 
+class:bindHook("GameOptions:generateList", function(self, data)
+  if data.kind ~= "gameplay" then return end
+
+  local Textzone = require "engine.ui.Textzone"
+  local Config = require "mod.auto_use.config"
+
+  local zone = Textzone.new{
+    width = self.c_desc.w,
+    height = self.c_desc.h,
+    text = string.toTString [[When enabled, automatic talents are not used while a movement effect that any non-movement action would cancel is active. This covers movement infusions, Lightning Speed, Step Up, Escape, and similar effects.
+
+Movement and other actions you perform manually are unaffected. Disable this if you want auto-use to keep firing during those effects.]]
+  }
+  data.list[#data.list+1] = {
+    zone = zone,
+    name = string.toTString"#GOLD##{bold}#No auto-use during speed talents#WHITE##{normal}#",
+    status = function(item) return Config.noAutoUseDuringSpeedTalents() and "enabled" or "disabled" end,
+    fct = function(item)
+      Config.setNoAutoUseDuringSpeedTalents(not Config.noAutoUseDuringSpeedTalents())
+      self.c_list:drawItem(item)
+    end,
+  }
+end)
+
 class:bindHook("ToME:run", function(self, data)
 	KeyBind:load("toggle-autotarget")
 	game.key:addBinds {

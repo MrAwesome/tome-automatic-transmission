@@ -1,5 +1,15 @@
 local _M = {}
 
+local Config = require "mod.auto_use.config"
+
+--- Speed effects that cancel on any non-movement action set one of these
+--- temporary values: WILD_SPEED (movement infusion, Escape, Hunter),
+--- LIGHTNING_SPEED, and STEP_UP. This mirrors the check in tome/class/Actor.lua
+--- that uses them for motion blur.
+function _M.hasActiveSpeedEffect(self)
+	return self:attr("wild_speed") or self:attr("lightning_speed") or self:attr("step_up")
+end
+
 local function hpMatches(self, hp, hp_custom)
 	local check = hp_custom or hp
 	if not check or not check.op or not check.pct then return true end
@@ -87,6 +97,8 @@ end
 
 function _M.evaluate(self, cfg, ctx, talent, talent_range)
 	if not cfg or not cfg.enabled then return false end
+
+	if Config.noAutoUseDuringSpeedTalents() and _M.hasActiveSpeedEffect(self) then return false end
 
 	if cfg.trigger == "left_click" then
 		if not ctx.left_click then return false end

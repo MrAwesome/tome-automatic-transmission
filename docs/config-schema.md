@@ -19,6 +19,15 @@ Each talent has a rule table stored in `game.player.talents_auto_config[tid]`
 | `resting` | `nil\|true\|false` | `nil` | Resting state filter |
 | `sustained` | `nil\|"on_when_safe"\|"off_when_enemies"\|"off_when_enemies_on_when_safe"` | `nil` | Sustained behavior |
 
+## Global Options
+
+Stored in `config.settings.tome.auto_use_tweaks` and shared across characters.
+Change them from the game menu: **Game Options → Gameplay**.
+
+| Option | Type | Default | Description |
+|--------|------|---------|-------------|
+| `no_auto_use_during_speed_talents` | boolean | `true` | Refuse auto-use during speed talents/effects that any non-movement action would cancel (movement infusion, Lightning Speed, Step Up, Escape, Hunter). Detection uses the `wild_speed`, `lightning_speed`, and `step_up` temporary values set by those effects. |
+
 ## Semantics
 
 - **`trigger = "left_click"`** — talent only fires when player left-clicked a hostile target this tick

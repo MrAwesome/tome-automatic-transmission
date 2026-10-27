@@ -2,7 +2,7 @@ long_name = "Automatic Transmission"
 short_name = "automatic_transmission"
 for_module = "tome"
 version = {1,7,6}
-addon_version = {1,0,8}
+addon_version = {1,0,9}
 weight = 100
 author = { "Gleesus", "admin@gleesus.net" }
 homepage = "https://github.com/MrAwesome/auto-use-tweaks-improved"
@@ -18,11 +18,15 @@ Per-talent rules (right-click a talent to Configure):
 * Distance band: custom min/max to nearest enemy
 * Resting: only while resting or only while not resting
 * Sustained: turn on when safe or off when enemies appear
+* Global: skip auto-use during speed talents (on by default)
 
 Default hotkeys:
 * Toggle auto-accept-target ALT+F1
 * Toggle auto-use on/off CTRL+P (or ALT+SHIFT+P for a separate additional disable)
 * Change auto-use-custom-priority ALT+SHIFT+O
+
+Adds game options:
+* "No auto-use during speed talents" - enabled by default, prevents auto-use during movement infusions, Lightning Speed, Step Up, Escape, etc.
 
 Based originally on this addon:
 https://te4.org/games/addons/tome/auto_use_tweaks

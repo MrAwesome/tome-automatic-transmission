@@ -45,6 +45,7 @@ See `docs/config-schema.md`.
 |-------|---------|------|
 | Per-character active rules | `game.player.talents_auto_config[tid]` | In-memory, saved to character file |
 | Cross-character defaults | `config.settings.tome.auto_use_tweaks.talent_prefs[tid]` | `game:saveSettings()` on every change |
+| Global addon options | `config.settings.tome.auto_use_tweaks` | `game:saveSettings()` on every change (Game Options → Gameplay) |
 
 `Config.set()` writes to both. `Config.get()` merges: player config > global prefs > hard defaults.
 

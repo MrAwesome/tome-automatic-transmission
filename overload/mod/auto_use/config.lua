@@ -1,5 +1,7 @@
 local _M = {}
 
+local GLOBAL_SETTINGS_KEY = "no_auto_use_during_speed_talents"
+
 _M.defaults = {
 	enabled = true,
 	trigger = "auto",
@@ -13,6 +15,28 @@ _M.defaults = {
 	resting = nil,
 	sustained = nil,
 }
+
+--- Global option: refuse auto-use while speed talents/effects that any
+--- non-movement action would cancel are active. Defaults to true.
+function _M.noAutoUseDuringSpeedTalents()
+	local settings = config and config.settings and config.settings.tome and config.settings.tome.auto_use_tweaks
+	if not settings or settings[GLOBAL_SETTINGS_KEY] == nil then return true end
+	return settings[GLOBAL_SETTINGS_KEY] and true or false
+end
+
+function _M.setNoAutoUseDuringSpeedTalents(enabled)
+	if not config then return end
+	config.settings = config.settings or {}
+	config.settings.tome = config.settings.tome or {}
+	config.settings.tome.auto_use_tweaks = config.settings.tome.auto_use_tweaks or {}
+	config.settings.tome.auto_use_tweaks[GLOBAL_SETTINGS_KEY] = enabled and true or false
+
+	if game then
+		local value = config.settings.tome.auto_use_tweaks[GLOBAL_SETTINGS_KEY]
+		game:saveSettings("tome.auto_use_tweaks." .. GLOBAL_SETTINGS_KEY,
+			("tome.auto_use_tweaks.%s = %s\n"):format(GLOBAL_SETTINGS_KEY, tostring(value)))
+	end
+end
 
 function _M.copy(t)
 	local u = {}
