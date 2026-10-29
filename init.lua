@@ -5,7 +5,7 @@ version = {1,7,6}
 addon_version = {1,0,9}
 weight = 100
 author = { "Gleesus", "admin@gleesus.net" }
-homepage = "https://github.com/MrAwesome/auto-use-tweaks-improved"
+homepage = "https://github.com/MrAwesome/tome-automatic-transmission"
 description = [[An overhaul of auto-use. Fine-grained control over when talents are used.
 
 Per-talent rules (right-click a talent to Configure):
