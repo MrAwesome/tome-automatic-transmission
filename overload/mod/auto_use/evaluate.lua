@@ -1,6 +1,36 @@
 local _M = {}
 
 local Config = require "mod.auto_use.config"
+local fail_log_cache = setmetatable({}, {__mode="k"})
+
+local function shouldLogFailSkip(self, talent)
+	local turn = game and game.turn or 0
+	local cache = fail_log_cache[self]
+	if not cache or cache.turn ~= turn then
+		cache = {turn=turn, talents={}}
+		fail_log_cache[self] = cache
+	end
+	local talent_key = talent.id or talent.name or tostring(talent)
+	if cache.talents[talent_key] then return false end
+	cache.talents[talent_key] = true
+	return true
+end
+
+local function logEquilibriumSkip(self, talent, chance, threshold)
+	if not shouldLogFailSkip(self, talent) then return end
+	game.log("#LIGHT_BLUE#[AT]#LAST# EQ fail chance #RED#%0.1f%%#LAST# >= #ORANGE#%d%%#LAST#, not using: #GOLD#%s#LAST#",
+		chance, threshold, talent.name)
+end
+
+local function logDebuffSkip(self, talent, chance, threshold, sources)
+	if not shouldLogFailSkip(self, talent) then return end
+	local source_text = {}
+	for _, source in ipairs(sources) do
+		source_text[#source_text + 1] = ("%s %0.1f%%"):format(source.label, source.chance)
+	end
+	game.log("#LIGHT_BLUE#[AT]#LAST# Debuff fail chance #RED#%0.1f%%#LAST# (%s) >= #ORANGE#%d%%#LAST#, not using: #GOLD#%s#LAST#",
+		chance, table.concat(source_text, ", "), threshold, talent.name)
+end
 
 --- Speed effects that cancel on any non-movement action set one of these
 --- temporary values: WILD_SPEED (movement infusion, Escape, Hunter),
@@ -87,6 +117,68 @@ function _M.buildContext(self, left_click, lc_target)
 		left_click = left_click,
 		lc_target = lc_target,
 	}
+end
+
+local function debuffFailureChance(self, talent)
+	if talent.never_fail then return 0, {} end
+
+	local active = self:isTalentActive(talent.id)
+	local survival = 1
+	local sources = {}
+	local function addChance(label, chance)
+		chance = util.bound(chance, 0, 100)
+		if chance <= 0 then return end
+		survival = survival * (1 - chance / 100)
+		sources[#sources + 1] = {label=label, chance=chance}
+	end
+
+	if not active then
+		if talent.is_spell then addChance("#ORCHID#spell#LAST#", self:attr("spell_failure") or 0) end
+		if talent.is_nature then addChance("#LIGHT_GREEN#nature#LAST#", self:attr("nature_failure") or 0) end
+		if talent.is_mind then addChance("#LIGHT_BLUE#mind#LAST#", self:attr("mind_failure") or 0) end
+	end
+
+	if (talent.mode ~= "sustained" or not active)
+		and util.getval(talent.no_energy, self, talent) ~= true
+		and not self:attr("force_talent_ignore_ressources")
+		and not talent.innate
+	then
+		addChance("#GOLD#talent#LAST#", self:attr("talent_fail_chance") or 0)
+	end
+
+	return (1 - survival) * 100, sources
+end
+
+--- Called immediately before an auto-use action, after all rule, cooldown,
+--- pre-use, target, and ordering checks have passed.
+function _M.skipForFailureChance(self, talent)
+	if not talent then return false end
+
+	local active = self:isTalentActive(talent.id)
+	local checks_equilibrium = talent.equilibrium or
+		(talent.sustain_equilibrium and not active)
+	if checks_equilibrium and not talent.never_fail
+		and not self:attr("force_talent_ignore_ressources")
+		and not self:attr("no_equilibrium_fail")
+		and (not self:attr("no_equilibrium_summon_fail") or not talent.is_summon)
+	then
+		local eq_chance = math.min(1, math.max(0,
+			math.sqrt(math.max(0, self:getEquilibrium() - self:getWil())) / 60
+		)) * 100
+		local threshold = Config.equilibriumFailChanceThreshold()
+		if eq_chance > 0 and eq_chance >= threshold then
+			logEquilibriumSkip(self, talent, eq_chance, threshold)
+			return true
+		end
+	end
+
+	local debuff_chance, debuff_sources = debuffFailureChance(self, talent)
+	local threshold = Config.debuffFailChanceThreshold()
+	if debuff_chance > 0 and debuff_chance >= threshold then
+		logDebuffSkip(self, talent, debuff_chance, threshold, debuff_sources)
+		return true
+	end
+	return false
 end
 
 function _M.isSafe(self, ctx)

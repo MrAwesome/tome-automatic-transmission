@@ -4,3 +4,9 @@ config.settings.tome.auto_use_tweaks.talent_prefs = config.settings.tome.auto_us
 if config.settings.tome.auto_use_tweaks.no_auto_use_during_speed_talents == nil then
 	config.settings.tome.auto_use_tweaks.no_auto_use_during_speed_talents = true
 end
+if config.settings.tome.auto_use_tweaks.equilibrium_fail_chance_threshold == nil then
+	config.settings.tome.auto_use_tweaks.equilibrium_fail_chance_threshold = 0
+end
+if config.settings.tome.auto_use_tweaks.debuff_fail_chance_threshold == nil then
+	config.settings.tome.auto_use_tweaks.debuff_fail_chance_threshold = 0
+end

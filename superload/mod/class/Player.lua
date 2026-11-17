@@ -74,12 +74,16 @@ function _M:automaticTalents()
 					local turn_on = cfg.sustained == "on_when_safe" or cfg.sustained == "off_when_enemies_on_when_safe"
 					local turn_off = cfg.sustained == "off_when_enemies" or cfg.sustained == "off_when_enemies_on_when_safe"
 					if turn_on and not self.sustain_talents[tid] and not self.talents_cd[tid] then
-						useTalentOrItem(self, inventory and bind_id or tid, inventory, item_name)
-						talents_ran_check = true
+						if not Evaluate.skipForFailureChance(self, t) then
+							useTalentOrItem(self, inventory and bind_id or tid, inventory, item_name)
+							talents_ran_check = true
+						end
 						can_use = false
 					elseif turn_off and self.sustain_talents[tid] then
-						useTalentOrItem(self, inventory and bind_id or tid, inventory, item_name)
-						talents_ran_check = true
+						if not Evaluate.skipForFailureChance(self, t) then
+							useTalentOrItem(self, inventory and bind_id or tid, inventory, item_name)
+							talents_ran_check = true
+						end
 						can_use = false
 					end
 				end
@@ -144,20 +148,28 @@ function _M:automaticTalents()
 	end
 
 	for _, use in ipairs(uses) do
+		local used = false
 		if left_click_trigger and use.ftarget then
 			local click_t = self.talents_def[use.tid]
 			if click_t then
 				local click_range = math.max(self:getTalentRange(click_t), self:getTalentRadius(click_t))
-				if core.fov.distance(self.x, self.y, use.ftarget.x, use.ftarget.y) <= click_range then
+				if core.fov.distance(self.x, self.y, use.ftarget.x, use.ftarget.y) <= click_range
+					and not Evaluate.skipForFailureChance(self, click_t)
+				then
 					useTalentOrItem(self, use.is_item and use.bind_id or use.tid, use.is_item, use.item_name, use.ftarget)
 					talents_ran_check = true
+					used = true
 				end
 			end
 		else
-			useTalentOrItem(self, use.is_item and use.bind_id or use.tid, use.is_item, use.item_name)
-			talents_ran_check = true
+			local use_t = self.talents_def[use.tid]
+			if not Evaluate.skipForFailureChance(self, use_t) then
+				useTalentOrItem(self, use.is_item and use.bind_id or use.tid, use.is_item, use.item_name)
+				talents_ran_check = true
+				used = true
+			end
 		end
-		if use.no_energy == 1 then break end
+		if used and use.no_energy == 1 then break end
 	end
 
 	lc_target = nil

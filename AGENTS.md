@@ -36,5 +36,6 @@ then checks each enabled talent's rules. Cross-character defaults in `config.set
 
 The engine code is in `~/code/t-engine4/`, with the ToME code living in `~/code/t-engine4/game/modules/tome/`.
 
-The extracted code of the DLCs is in `~/code/addon-testing/tome-dlcs/`. This can be useful for checking the implementation of DLC-only talents/tinker
-s, such as Saw Wheels or Rocket Boots.
+The extracted code of the DLCs is in `~/code/addon-testing/tome-dlcs/` or `~/code/t-engine4/game/addons/`,
+depending on machine. This can be useful for checking the implementation of DLC-only talents/tinkers,
+such as Saw Wheels or Rocket Boots.

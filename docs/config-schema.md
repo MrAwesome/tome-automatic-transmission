@@ -27,6 +27,8 @@ Change them from the game menu: **Game Options → Gameplay**.
 | Option | Type | Default | Description |
 |--------|------|---------|-------------|
 | `no_auto_use_during_speed_talents` | boolean | `true` | Refuse auto-use during speed talents/effects that any non-movement action would cancel (movement infusion, Lightning Speed, Step Up, Escape, Hunter). Detection uses the `wild_speed`, `lightning_speed`, and `step_up` temporary values set by those effects. |
+| `equilibrium_fail_chance_threshold` | integer (0-100) | `0` | Skip auto-use for talents subject to equilibrium failure when current failure chance is greater than zero and at least this percentage. `0` skips whenever there is any chance of failure; `100` skips only guaranteed failures. |
+| `debuff_fail_chance_threshold` | integer (0-100) | `0` | Skip auto-use when combined debuff failure chance is greater than zero and at least this percentage. Combines applicable `talent_fail_chance`, `spell_failure`, `nature_failure`, and `mind_failure` checks; equilibrium is separate. |
 
 ## Semantics
 

@@ -41,6 +41,7 @@ class:bindHook("GameOptions:generateList", function(self, data)
   if data.kind ~= "gameplay" then return end
 
   local Textzone = require "engine.ui.Textzone"
+  local GetQuantitySlider = require "engine.dialogs.GetQuantitySlider"
   local Config = require "mod.auto_use.config"
 
   local zone = Textzone.new{
@@ -52,11 +53,45 @@ Movement and other actions you perform manually are unaffected. Disable this if 
   }
   data.list[#data.list+1] = {
     zone = zone,
-    name = string.toTString"#GOLD##{bold}#No auto-use during speed talents#WHITE##{normal}#",
+    name = string.toTString"#GOLD##{bold}#[AT] Disable auto-use during speed talents#WHITE##{normal}#",
     status = function(item) return Config.noAutoUseDuringSpeedTalents() and "enabled" or "disabled" end,
     fct = function(item)
       Config.setNoAutoUseDuringSpeedTalents(not Config.noAutoUseDuringSpeedTalents())
       self.c_list:drawItem(item)
+    end,
+  }
+
+  local eq_zone = Textzone.new{
+    width = self.c_desc.w,
+    height = self.c_desc.h,
+    text = string.toTString [[Automatic use skips talents subject to equilibrium failure when the current fail chance is at least this threshold. Set to 0 to skip whenever there is any chance of failure; set to 100 to skip only guaranteed failures.]]
+  }
+  data.list[#data.list+1] = {
+    zone = eq_zone,
+    name = string.toTString"#GOLD##{bold}#[AT] Skip auto-use when EQ fail chance >= threshold#WHITE##{normal}#",
+    status = function(item) return ("%d%%"):format(Config.equilibriumFailChanceThreshold()) end,
+    fct = function(item)
+      game:registerDialog(GetQuantitySlider.new(_t"Equilibrium fail chance threshold", _t"From 0 to 100", Config.equilibriumFailChanceThreshold(), 0, 100, 1, function(value)
+        Config.setEquilibriumFailChanceThreshold(value)
+        self.c_list:drawItem(item)
+      end))
+    end,
+  }
+
+  local debuff_zone = Textzone.new{
+    width = self.c_desc.w,
+    height = self.c_desc.h,
+    text = string.toTString [[Automatic use skips talents when combined debuff failure chance meets this threshold. This combines generic talent failure chance with applicable spell, nature, and mind failure chances. Equilibrium failure has its own setting. Set to 0 to skip whenever any debuff failure chance exists.]]
+  }
+  data.list[#data.list+1] = {
+    zone = debuff_zone,
+    name = string.toTString"#GOLD##{bold}#[AT] Skip auto-use when debuff fail chance >= threshold#WHITE##{normal}#",
+    status = function(item) return ("%d%%"):format(Config.debuffFailChanceThreshold()) end,
+    fct = function(item)
+      game:registerDialog(GetQuantitySlider.new(_t"Debuff fail chance threshold", _t"From 0 to 100", Config.debuffFailChanceThreshold(), 0, 100, 1, function(value)
+        Config.setDebuffFailChanceThreshold(value)
+        self.c_list:drawItem(item)
+      end))
     end,
   }
 end)

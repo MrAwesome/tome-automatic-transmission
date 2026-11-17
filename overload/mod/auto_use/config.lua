@@ -1,6 +1,8 @@
 local _M = {}
 
 local GLOBAL_SETTINGS_KEY = "no_auto_use_during_speed_talents"
+local EQUILIBRIUM_FAIL_CHANCE_KEY = "equilibrium_fail_chance_threshold"
+local DEBUFF_FAIL_CHANCE_KEY = "debuff_fail_chance_threshold"
 
 _M.defaults = {
 	enabled = true,
@@ -35,6 +37,51 @@ function _M.setNoAutoUseDuringSpeedTalents(enabled)
 		local value = config.settings.tome.auto_use_tweaks[GLOBAL_SETTINGS_KEY]
 		game:saveSettings("tome.auto_use_tweaks." .. GLOBAL_SETTINGS_KEY,
 			("tome.auto_use_tweaks.%s = %s\n"):format(GLOBAL_SETTINGS_KEY, tostring(value)))
+	end
+end
+
+--- Minimum equilibrium failure chance at which auto-use is skipped. Defaults
+--- to 0%, which skips whenever any chance of failure exists.
+function _M.equilibriumFailChanceThreshold()
+	local settings = config and config.settings and config.settings.tome and config.settings.tome.auto_use_tweaks
+	local threshold = settings and settings[EQUILIBRIUM_FAIL_CHANCE_KEY]
+	if type(threshold) ~= "number" then return 0 end
+	return math.floor(util.bound(threshold, 0, 100))
+end
+
+function _M.setEquilibriumFailChanceThreshold(threshold)
+	if not config then return end
+	config.settings = config.settings or {}
+	config.settings.tome = config.settings.tome or {}
+	config.settings.tome.auto_use_tweaks = config.settings.tome.auto_use_tweaks or {}
+	threshold = math.floor(util.bound(tonumber(threshold) or 0, 0, 100))
+	config.settings.tome.auto_use_tweaks[EQUILIBRIUM_FAIL_CHANCE_KEY] = threshold
+
+	if game then
+		game:saveSettings("tome.auto_use_tweaks." .. EQUILIBRIUM_FAIL_CHANCE_KEY,
+			("tome.auto_use_tweaks.%s = %d\n"):format(EQUILIBRIUM_FAIL_CHANCE_KEY, threshold))
+	end
+end
+
+--- Minimum total debuff failure chance at which auto-use is skipped.
+function _M.debuffFailChanceThreshold()
+	local settings = config and config.settings and config.settings.tome and config.settings.tome.auto_use_tweaks
+	local threshold = settings and settings[DEBUFF_FAIL_CHANCE_KEY]
+	if type(threshold) ~= "number" then return 0 end
+	return math.floor(util.bound(threshold, 0, 100))
+end
+
+function _M.setDebuffFailChanceThreshold(threshold)
+	if not config then return end
+	config.settings = config.settings or {}
+	config.settings.tome = config.settings.tome or {}
+	config.settings.tome.auto_use_tweaks = config.settings.tome.auto_use_tweaks or {}
+	threshold = math.floor(util.bound(tonumber(threshold) or 0, 0, 100))
+	config.settings.tome.auto_use_tweaks[DEBUFF_FAIL_CHANCE_KEY] = threshold
+
+	if game then
+		game:saveSettings("tome.auto_use_tweaks." .. DEBUFF_FAIL_CHANCE_KEY,
+			("tome.auto_use_tweaks.%s = %d\n"):format(DEBUFF_FAIL_CHANCE_KEY, threshold))
 	end
 end
 
